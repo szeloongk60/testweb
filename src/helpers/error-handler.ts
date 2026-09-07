@@ -1,0 +1,44 @@
+import log from 'loglevel'
+
+import { emitter } from '@/helpers'
+import i18n from '@/localization'
+
+export class ErrorHandler {
+  static process(error: Error | unknown, errorMessage = ''): void {
+    const { msgTranslation, msgType } = ErrorHandler._getErrorMessage(error)
+    if (msgTranslation) {
+      emitter.emit(msgType, {
+        message: errorMessage || msgTranslation,
+      })
+    }
+
+    ErrorHandler.processWithoutFeedback(error)
+  }
+
+  static processWithoutFeedback(error: Error | unknown): void {
+    log.error(error)
+    log.error(JSON.stringify(error, null, 2))
+  }
+
+  static _getErrorMessage(error: Error | unknown): {
+    msgTranslation: string
+    msgType: 'error' | 'warning'
+  } {
+    let errorMessage = ''
+    let msgType: 'error' | 'warning' = 'error'
+
+    if (error instanceof Error) {
+      switch (error.constructor) {
+        default: {
+          errorMessage = i18n.t('errors.default')
+          msgType = 'error'
+        }
+      }
+    }
+
+    return {
+      msgTranslation: errorMessage,
+      msgType: msgType || 'error',
+    }
+  }
+}

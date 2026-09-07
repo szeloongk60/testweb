@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+.eslintcache
+yarn.lock
+pnpm-lock.yaml
+scripts/*.js
+index.html
+*.md
+.yarn/
+abis
+public
+src/contexts/Web3Provider/**/contracts/**/types
